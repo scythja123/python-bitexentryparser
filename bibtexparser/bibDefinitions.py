@@ -1,8 +1,6 @@
 import re 
 import itertools
 
-from bibtexparser import latexenc as latexenc
-
 import logging
 
 log = logging.getLogger(__name__)

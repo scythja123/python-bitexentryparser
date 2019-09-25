@@ -13,7 +13,7 @@ This package is heavily based on the bibtexparser version 0.6.2 module and modif
 __all__ = [
     'load', 'write',
     'getString', 'setString',
-    'bibparser', 'bibwriter', 'bibtexexpression', 'latexenc',
+    'bibparser', 'bibwriter'
 ]
 __version__ = '0.7'
 
