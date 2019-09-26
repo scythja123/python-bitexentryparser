@@ -79,8 +79,14 @@ class BibTexParser(object):
             d['ID'] = entry_id
 
             # find keys and fields using regular expressions.
+            # find first all key = {field} and key = "field"
+            for match in re.finditer('\s*?([a-zA-Z0-9]+?)\s*?=\s*?[{"](.*?)[}"]\s*?,',bibtex_expression.group(3),re.DOTALL):
+                logger.debug("Match found:" + match.group(1) + " and " + match.group(2))
 
-            for match in re.finditer('([a-zA-Z0-9]+?)\s*?=\s*?(.*?)\s*?[,]\n',bibtex_expression.group(3),re.DOTALL):
+                processed_key = self._process_key(match.group(1))
+                d[processed_key] = self._get_processed_field(processed_key,match.group(2))
+            # find all key = string
+            for match in re.finditer('\s*?([a-zA-Z0-9]+?)\s*?=\s*?([^"{}]*?)\s*?,',bibtex_expression.group(3),re.DOTALL):
                 logger.debug("Match found:" + match.group(1) + " and " + match.group(2))
 
                 processed_key = self._process_key(match.group(1))
@@ -136,6 +142,7 @@ class BibTexParser(object):
                 d = d -1
             if d == 0:
                 return idx+start
+        return start
                 
     # this function processes the field of a given key.
     def _get_processed_field(self,key,field):
@@ -147,15 +154,15 @@ class BibTexParser(object):
         logger.debug("Start field processing: " + field)
         processed_field=field.strip()
         
-        if (processed_field.startswith('{') and self._get_index_of_closing_bracket(processed_field,0) == len(processed_field)-1):
-            processed_field = processed_field[1:len(processed_field)-1]
-            logger.debug("Found brackets to strip: " + processed_field)
+        # if (processed_field.startswith('{') and self._get_index_of_closing_bracket(processed_field,0) == len(processed_field)-1):
+        #     processed_field = processed_field[1:len(processed_field)-1]
+        #     logger.debug("Found brackets to strip: " + processed_field)
 
-        while (processed_field.startswith('"') and processed_field.endswith('"')):
-            processed_field = processed_field[1:len(processed_field)-1]
-            logger.debug("Found brackets to strip: " + processed_field)
+        # while (processed_field.startswith('"') and processed_field.endswith('"')):
+        #     processed_field = processed_field[1:len(processed_field)-1]
+        #     logger.debug("Found brackets to strip: " + processed_field)
             
-        processed_field = processed_field.strip()
+        # processed_field = processed_field.strip()
 
         if key in BibDefinitions.contains_latex_expressions:
             processed_field = BibDefinitions.latex_to_string(processed_field)
@@ -176,12 +183,24 @@ class BibTexParser(object):
 
     def _process_authors(self,field):
         fields = field.split(' and ')
+        processed_authors = list()
+        concatenate_entry = None
         for idx,entry in enumerate(fields):
             entry = entry.strip()
-            if (entry.startswith('{') and self._get_index_of_closing_bracket(entry,0) == len(entry)-1):
-                entry = entry[1:len(entry)-1]
-            fields[idx] = entry.strip()
-        return fields
+            if concatenate_entry is not None:
+                if entry.endswith('}'):
+                    entry = " and ".join([concatenate_entry,entry[:-1]])
+                    concatenate_entry = None
+                else:
+                    concatenate_entry = " and ".join([concatenate_entry,entry])
+            elif entry.startswith('{') and self._get_index_of_closing_bracket(entry,0) == 0:
+                concatenate_entry = entry[1:]
+            elif (entry.startswith('{') and self._get_index_of_closing_bracket(entry,0) == len(entry)-1):
+                entry = entry[1:-1]
+                
+            if concatenate_entry is None:
+                processed_authors.append(entry.strip())
+        return processed_authors
     
     def set_entry_field(self,bibentry,key,text):
         processed_key = self._process_key(key)

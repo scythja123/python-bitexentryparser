@@ -179,7 +179,7 @@ class TestBibtexparser(unittest.TestCase):
         self.parser.set_entry_field(test_entry,"note","hello")
         self.assertEqual(test_entry["note"],"hello")
         self.parser.set_entry_field(test_entry,"note","{Variation}")
-        self.assertEqual(test_entry["note"],"Variation")
+        self.assertEqual(test_entry["note"],"{Variation}")
         self.parser.set_entry_field(test_entry,"note","{L}yapunov and {CO}")
         self.assertEqual(test_entry["note"],"{L}yapunov and {CO}")
         self.parser.set_entry_field(test_entry,"note","Lyapunov and CO")
@@ -194,7 +194,7 @@ class TestBibtexparser(unittest.TestCase):
 
         self.parser.set_entry_field(test_entry,"journal","hello")
         self.assertEqual(test_entry["journal"],"hello")
-        self.parser.set_entry_field(test_entry,"journal","{Variation}")
+        self.parser.set_entry_field(test_entry,"journal","Variation")
         self.assertEqual(test_entry["journal"],"Variation")
         self.parser.set_entry_field(test_entry,"journal","{L}yapunov and {CO}")
         self.assertEqual(test_entry["journal"],"Lyapunov and CO")
@@ -212,7 +212,7 @@ class TestBibtexparser(unittest.TestCase):
         self.parser.set_entry_field(test_entry,"title","hello")
         self.assertEqual(test_entry["title"],"hello")
         self.parser.set_entry_field(test_entry,"title","{Variation}")
-        self.assertEqual(test_entry["title"],"Variation")
+        self.assertEqual(test_entry["title"],"{Variation}")
         self.parser.set_entry_field(test_entry,"title","{L}yapunov and {CO}")
         self.assertEqual(test_entry["title"],"Lyapunov and CO")
         self.parser.set_entry_field(test_entry,"title","Lyapunov and CO")
@@ -228,7 +228,7 @@ class TestBibtexparser(unittest.TestCase):
 
         self.parser.set_entry_field(test_entry,"month","hello")
         self.assertEqual(test_entry["month"],"hello")
-        self.parser.set_entry_field(test_entry,"month","{June}")
+        self.parser.set_entry_field(test_entry,"month","June")
         self.assertEqual(test_entry["month"],6)
         self.parser.set_entry_field(test_entry,"month","7")
         self.assertEqual(test_entry["month"],7)
@@ -276,6 +276,62 @@ class TestBibtexparser(unittest.TestCase):
         self.assertEqual(test_entry['author'], ['Test. M'])
         self.assertEqual(test_entry['title'], 'Title')
         self.assertEqual(test_entry['journal'], 'Journal Name')
+        self.assertEqual(test_entry['volume'], '85')
+        self.assertEqual(test_entry['number'], '8')
+        self.assertEqual(test_entry['pages'], '1130 - 1145')
+        self.assertEqual(test_entry['doi'], '10.1080/00207179.2012.679970')
+        self.assertEqual(test_entry['year'], '2012')
+        self.assertEqual(test_entry['link'], 'http://www.tandfonline.com/doi/abs/10.1080/00207179.2012.679970')
+        
+    def test_basic_bibtex_string_parse_with_comma_in_title(self):
+        test_string = """
+        @article{id,
+        author = {Test. M},
+        title = {Title, that is long, and filled with commas},
+        journal = {Journal Name},
+        volume = {85},
+        number = {8},
+        pages = {1130 - 1145},
+        year = {2012},
+        doi = {10.1080/00207179.2012.679970},
+        URL = {http://www.tandfonline.com/doi/abs/10.1080/00207179.2012.679970},
+        eprint = {http://www.tandfonline.com/doi/abs/10.1080/00207179.2012.679970},}"""
+
+        test_entry = self.parser.parse(test_string)
+        
+        self.assertEqual(test_entry['ENTRYTYPE'], 'article')
+        self.assertEqual(test_entry['ID'], 'id')
+        self.assertEqual(test_entry['author'], ['Test. M'])
+        self.assertEqual(test_entry['title'], 'Title, that is long, and filled with commas')
+        self.assertEqual(test_entry['journal'], 'Journal Name')
+        self.assertEqual(test_entry['volume'], '85')
+        self.assertEqual(test_entry['number'], '8')
+        self.assertEqual(test_entry['pages'], '1130 - 1145')
+        self.assertEqual(test_entry['doi'], '10.1080/00207179.2012.679970')
+        self.assertEqual(test_entry['year'], '2012')
+        self.assertEqual(test_entry['link'], 'http://www.tandfonline.com/doi/abs/10.1080/00207179.2012.679970')
+
+    def test_basic_bibtex_string_parse_with_strings(self):
+        test_string = """
+        @article{id,
+        author = {Test. M},
+        title = {Title},
+        journal = journalname # etc,
+        volume = 85,
+        number = 8,
+        pages = 1130 - 1145,
+        year = {2012},
+        doi = {10.1080/00207179.2012.679970},
+        URL = {http://www.tandfonline.com/doi/abs/10.1080/00207179.2012.679970},
+        eprint = {http://www.tandfonline.com/doi/abs/10.1080/00207179.2012.679970},}"""
+
+        test_entry = self.parser.parse(test_string)
+        
+        self.assertEqual(test_entry['ENTRYTYPE'], 'article')
+        self.assertEqual(test_entry['ID'], 'id')
+        self.assertEqual(test_entry['author'], ['Test. M'])
+        self.assertEqual(test_entry['title'], 'Title')
+        self.assertEqual(test_entry['journal'], 'journalname # etc')
         self.assertEqual(test_entry['volume'], '85')
         self.assertEqual(test_entry['number'], '8')
         self.assertEqual(test_entry['pages'], '1130 - 1145')
@@ -352,7 +408,7 @@ class TestBibtexparser(unittest.TestCase):
         pages = "{1130 - 1145}",
         publisher = "Taylor \& Francis",
         title = "A flexible distributed framework for realising electric and plug-in hybrid vehicle charging policies",
-        volume = "85",
+        volume = {{85}},
         }
         """
         test_entry = self.parser.parse(test_string)
@@ -361,13 +417,13 @@ class TestBibtexparser(unittest.TestCase):
         self.assertEqual(test_entry['ID'], 'evcharging2012ijc')
         self.assertEqual(test_entry['author'], ['Corporation and Inc'])
         self.assertEqual(test_entry['title'], 'A flexible distributed framework for realising electric and plug-in hybrid vehicle charging policies')
-        self.assertEqual(test_entry['journal'], 'International Journal of Control')
-        self.assertEqual(test_entry['number'], '8')
+        self.assertEqual(test_entry['journal'], '"International Journal of Control"')
+        self.assertEqual(test_entry['number'], '"8"')
         self.assertEqual(test_entry['pages'], '{1130 - 1145}')
         self.assertEqual(test_entry['publisher'], 'Taylor & Francis')
         self.assertEqual(test_entry['doi'], '10.1080/00207179.2012.679970')
-        self.assertEqual(test_entry['year'], '2012')
-        self.assertEqual(test_entry['volume'], '85')
+        self.assertEqual(test_entry['year'], '"2012"')
+        self.assertEqual(test_entry['volume'], '{85}')
         self.assertNotIn('link',test_entry.keys())
 
         
