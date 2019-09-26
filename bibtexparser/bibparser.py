@@ -150,6 +150,10 @@ class BibTexParser(object):
         if (processed_field.startswith('{') and self._get_index_of_closing_bracket(processed_field,0) == len(processed_field)-1):
             processed_field = processed_field[1:len(processed_field)-1]
             logger.debug("Found brackets to strip: " + processed_field)
+
+        while (processed_field.startswith('"') and processed_field.endswith('"')):
+            processed_field = processed_field[1:len(processed_field)-1]
+            logger.debug("Found brackets to strip: " + processed_field)
             
         processed_field = processed_field.strip()
 

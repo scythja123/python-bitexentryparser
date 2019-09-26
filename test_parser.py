@@ -311,6 +311,65 @@ class TestBibtexparser(unittest.TestCase):
         self.assertEqual(test_entry['year'], '2012')
         self.assertEqual(test_entry['volume'], '85')
         self.assertNotIn('link',test_entry.keys())
+
+    def test_real_bibtex_string_parse_with_string_delimineters(self):
+        test_string= """
+        @arTicle{evcharging2012ijc,
+        author = "St\\"{u}dli, S. and Crisostomi, E. and Middleton, R. and Shorten, R.",
+        year = "2012",
+        doi = "10.1080/00207179.2012.679970",
+        journal = "International Journal of Control",
+        number = "8",
+        pages = "1130 - 1145",
+        publisher = "Taylor \& Francis",
+        title = "A flexible distributed framework for realising electric and plug-in hybrid vehicle charging policies",
+        volume = "85",
+        }
+        """
+        test_entry = self.parser.parse(test_string)
+        
+        self.assertEqual(test_entry['ENTRYTYPE'], 'article')
+        self.assertEqual(test_entry['ID'], 'evcharging2012ijc')
+        self.assertEqual(test_entry['author'], ['Stüdli, S.','Crisostomi, E.','Middleton, R.', 'Shorten, R.'])
+        self.assertEqual(test_entry['title'], 'A flexible distributed framework for realising electric and plug-in hybrid vehicle charging policies')
+        self.assertEqual(test_entry['journal'], 'International Journal of Control')
+        self.assertEqual(test_entry['number'], '8')
+        self.assertEqual(test_entry['pages'], '1130 - 1145')
+        self.assertEqual(test_entry['publisher'], 'Taylor & Francis')
+        self.assertEqual(test_entry['doi'], '10.1080/00207179.2012.679970')
+        self.assertEqual(test_entry['year'], '2012')
+        self.assertEqual(test_entry['volume'], '85')
+        self.assertNotIn('link',test_entry.keys())
+
+    def test_real_bibtex_string_parse_with_double_delimineters(self):
+        test_string= """
+        @arTicle{evcharging2012ijc,
+        author = {{Corporation and Inc}},
+        year = {"2012"},
+        doi = "10.1080/00207179.2012.679970",
+        journal = {"International Journal of Control"},
+        number = ""8"",
+        pages = "{1130 - 1145}",
+        publisher = "Taylor \& Francis",
+        title = "A flexible distributed framework for realising electric and plug-in hybrid vehicle charging policies",
+        volume = "85",
+        }
+        """
+        test_entry = self.parser.parse(test_string)
+        
+        self.assertEqual(test_entry['ENTRYTYPE'], 'article')
+        self.assertEqual(test_entry['ID'], 'evcharging2012ijc')
+        self.assertEqual(test_entry['author'], ['Corporation and Inc'])
+        self.assertEqual(test_entry['title'], 'A flexible distributed framework for realising electric and plug-in hybrid vehicle charging policies')
+        self.assertEqual(test_entry['journal'], 'International Journal of Control')
+        self.assertEqual(test_entry['number'], '8')
+        self.assertEqual(test_entry['pages'], '{1130 - 1145}')
+        self.assertEqual(test_entry['publisher'], 'Taylor & Francis')
+        self.assertEqual(test_entry['doi'], '10.1080/00207179.2012.679970')
+        self.assertEqual(test_entry['year'], '2012')
+        self.assertEqual(test_entry['volume'], '85')
+        self.assertNotIn('link',test_entry.keys())
+
         
     def test_load_function(self):
         test_string = """
