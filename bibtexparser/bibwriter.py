@@ -45,6 +45,21 @@ class BibTexWriter(object):
     def is_writer(self):
         return True
 
+    def add_do_not_display_field(self,fields):
+        if type(fields) is str:
+            self.do_not_display_fields.add(fields.strip())
+        elif type(fields)is list:
+            for field in fields:
+                self.do_not_display_fields.add(field.strip())
+
+    def set_do_not_display_field(self,fields):
+        self.do_not_display_fields = set()
+        if type(fields) is str:
+            self.do_not_display_fields.add(fields.strip())
+        elif type(fields)is list:
+            for field in fields:
+                self.do_not_display_fields.add(field.strip())
+
     def reset_to_default_settings(self):
         self.indent = '    '
         self.display_order = []

@@ -36,12 +36,12 @@ class BibDefinitions(type):
     @classmethod
     def add_protected_upper_case_fields(cls,fields):
         if type(fields) is str:
-            cls.protect_upper_case_fields.add(fields)
+            cls.protect_upper_case_fields.add(fields.strip())
         elif type(fields) is list or type(fields) is set:
             for field in fields:
-                cls.protect_upper_case_fields.add(field)
+                cls.protect_upper_case_fields.add(field.strip())
         else:
-            logger.warning("fields should be provided as list, set, or string")
+            log.error("fields should be provided as list, set, or string")
                         
     @classmethod
     def add_protected_upper_case_words(cls,protected_upper_case_words):
@@ -52,9 +52,9 @@ class BibDefinitions(type):
         """
         if(type(protected_upper_case_words) is list or type(protected_upper_case_words) is set):
             for word in protected_upper_case_words:
-                cls.protected_upper_case_words[word] = re.sub('([A-Z]+)','{\g<1>}',word)
+                cls.protected_upper_case_words[word.strip()] = re.sub('([A-Z]+)','{\g<1>}',word.strip())
         elif(type(protected_upper_case_words) is str):
-            cls.protected_upper_case_words[protected_upper_case_words] = re.sub('([A-Z]+)','{\g<1>}',protected_upper_case_words)
+            cls.protected_upper_case_words[protected_upper_case_words.strip()] = re.sub('([A-Z]+)','{\g<1>}',protected_upper_case_words.strip())
         else:
             log.error("protected_upper_case_words should be provided as list or string" )
             log.error(type(protected_upper_case_words))
@@ -69,10 +69,10 @@ class BibDefinitions(type):
     @classmethod
     def add_containing_latex_fields(cls,fields):
         if type(fields) is str:
-            cls.contains_latex_expressions.add(fields)
+            cls.contains_latex_expressions.add(fields.strip())
         elif type(fields) is list or type(fields) is set:
             for field in fields:
-                cls.contains_latex_expressions.add(field)
+                cls.contains_latex_expressions.add(field.strip())
         else:
             logger.warning("fields should be provided as list, set, or string")
 
@@ -92,10 +92,10 @@ class BibDefinitions(type):
         :param default_replacement_list: numbered list that assigns a word to the number
         :type: list
         """
-        cls.not_stored_as_string.add(field)
-        setattr(cls,"recognised_"+field, recognised_dict)
-        setattr(cls,"default_"+field, standard_list)
-        setattr(cls,"non_recognised_"+field,set())
+        cls.not_stored_as_string.add(field.strip())
+        setattr(cls,"recognised_"+field.strip(), recognised_dict)
+        setattr(cls,"default_"+field.strip(), standard_list)
+        setattr(cls,"non_recognised_"+field.strip(),set())
 
     # get all non-recognised entries that have been encountered by parser for the field 
     @classmethod
@@ -143,6 +143,8 @@ class BibDefinitions(type):
     _string_latex_tuppels = (
         ('ä','\\"{a}'),
         ('å','\\r{a}'),
+        ("á","\\'{a}"),
+        ("à","\\`{a}"),
         ('ë','\\"{e}'),
         ("í","\\'{\\i}"),
         ('ø','\\o'),
