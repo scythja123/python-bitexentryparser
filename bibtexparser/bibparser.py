@@ -148,7 +148,7 @@ class BibTexParser(object):
     def _get_processed_field(self,key,field):
 
         if not field or field == "{}":
-            logger.warning("field is not a string")
+            logger.debug(f'field is empty')
             field = ''
 
         logger.debug("Start field processing: " + field)
@@ -222,11 +222,7 @@ class BibTexParser(object):
         
             except KeyError:
                 getattr(BibDefinitions, 'non_recognised_'+key).add(field.lower())
-            
-                if key == 'month':
-                    logger.error("Spell your month correctly. It is not that hard. Unless you don't speak English, then you are excused.")
-                else:
-                    logger.error(key + " is not a recognised " + field)
+                logger.error(f'For the key {key}, the field {field} is not recognised')
                 return field
             
         elif type(field) is list:
