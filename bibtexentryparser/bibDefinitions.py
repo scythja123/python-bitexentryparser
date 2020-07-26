@@ -1,3 +1,14 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+# Based on
+# Original source: github.com/sciunto-org/python-bibtexparser
+# Authors:
+# markmacgillivray
+# Etienne Posthumus (epoz)
+# Francois Boulogne <fboulogne at april dot org>
+# Modified by Sonja Stuedli
+
 import re 
 import itertools
 

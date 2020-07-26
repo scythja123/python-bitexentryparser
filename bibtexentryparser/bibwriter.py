@@ -1,11 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # Author: Francois Boulogne; Modified by Sonja Stuedli
-# License:
 
 import re
 import logging
-from bibtexparser.bibDefinitions import BibDefinitions
+from bibtexentryparser.bibDefinitions import BibDefinitions
 
 logger = logging.getLogger(__name__)
 

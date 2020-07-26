@@ -15,12 +15,12 @@ __all__ = [
     'getString', 'setString',
     'bibparser', 'bibwriter'
 ]
-__version__ = '0.7'
+__version__ = '1.0.0'
 
 
-from bibtexparser import bibparser
-from bibtexparser import bibwriter
-from bibtexparser.bibDefinitions import BibDefinitions
+from bibtexentryparser import bibparser
+from bibtexentryparser import bibwriter
+from bibtexentryparser.bibDefinitions import BibDefinitions
 
 # Load default settings for all global choices
 def reset_to_default_settings():

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Based on
-# Original source: github.com/okfn/bibserver
+# Original source: github.com/sciunto-org/python-bibtexparser
 # Authors:
 # markmacgillivray
 # Etienne Posthumus (epoz)
@@ -14,7 +14,7 @@ import re
 import logging
 logger = logging.getLogger(__name__)
 
-from bibtexparser.bibDefinitions import BibDefinitions
+from bibtexentryparser.bibDefinitions import BibDefinitions
 
 __all__ = ['BibTexParser']
 
